@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Kota;
+use App\Models\PerjalananDinas;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,7 +18,7 @@ class DatabaseSeeder extends Seeder
         User::factory(10)->create();
 
         // Create Admin user from .env
-        User::updateOrCreate(
+        $admin = User::updateOrCreate(
             ['email' => env('ADMIN_EMAIL')],
             [
                 'name' => env('ADMIN_NAME', 'Admin User'),
@@ -27,6 +28,7 @@ class DatabaseSeeder extends Seeder
                 'role' => 'ADMIN',
             ]
         );
+
 
         // Seed kota data
         Kota::truncate();
@@ -183,6 +185,123 @@ class DatabaseSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+        ]);
+
+        // Fetch kota IDs for asal and tujuan
+        $jakarta = Kota::where('nama', 'Jakarta')->first();
+        $bandung = Kota::where('nama', 'Bandung')->first();
+        $surabaya = Kota::where('nama', 'Surabaya')->first();
+        $singapore = Kota::where('nama', 'Singapore')->first();
+        $denpasar = Kota::where('nama', 'Denpasar')->first();
+        $london = Kota::where('nama', 'London')->first();
+        $sydney = Kota::where('nama', 'Sydney')->first();
+        $makassar = Kota::where('nama', 'Makassar')->first();
+
+        PerjalananDinas::truncate();
+
+        PerjalananDinas::create([
+            'user_id' => $admin->id,
+            'maksud_tujuan' => 'Meeting with Bandung office',
+            'tanggal_berangkat' => '2025-07-01',
+            'tanggal_pulang' => '2025-07-03',
+            'kota_asal_id' => $jakarta->id,
+            'kota_tujuan_id' => $bandung->id,
+            'durasi_hari' => 3,
+            'uang_saku_per_hari' => 200000,
+            'total_uang_saku' => 600000,
+            'status' => 'approved',
+            'disetujui_oleh' => $admin->id,
+            'tanggal_disetujui' => now(),
+        ]);
+
+        PerjalananDinas::create([
+            'user_id' => $admin->id,
+            'maksud_tujuan' => 'Site inspection in Surabaya',
+            'tanggal_berangkat' => '2025-08-15',
+            'tanggal_pulang' => '2025-08-16',
+            'kota_asal_id' => $jakarta->id,
+            'kota_tujuan_id' => $surabaya->id,
+            'durasi_hari' => 2,
+            'uang_saku_per_hari' => 250000,
+            'total_uang_saku' => 500000,
+            'status' => 'pending',
+            'disetujui_oleh' => null,
+            'tanggal_disetujui' => null,
+        ]);
+
+        PerjalananDinas::create([
+            'user_id' => $admin->id,
+            'maksud_tujuan' => 'Tech conference in Singapore',
+            'tanggal_berangkat' => '2025-09-10',
+            'tanggal_pulang' => '2025-09-14',
+            'kota_asal_id' => $jakarta->id,
+            'kota_tujuan_id' => $singapore->id,
+            'durasi_hari' => 5,
+            'uang_saku_per_hari' => 50 * 17000,
+            'total_uang_saku' => 5 * (50 * 17000),
+            'status' => 'pending',
+            'disetujui_oleh' => null,
+            'tanggal_disetujui' => null,
+        ]);
+
+        PerjalananDinas::create([
+            'user_id' => $admin->id,
+            'maksud_tujuan' => 'Team building in Bali',
+            'tanggal_berangkat' => '2025-10-05',
+            'tanggal_pulang' => '2025-10-07',
+            'kota_asal_id' => $jakarta->id,
+            'kota_tujuan_id' => $denpasar->id,
+            'durasi_hari' => 3,
+            'uang_saku_per_hari' => 300000,
+            'total_uang_saku' => 900000,
+            'status' => 'approved',
+            'disetujui_oleh' => $admin->id,
+            'tanggal_disetujui' => now(),
+        ]);
+
+        PerjalananDinas::create([
+            'user_id' => $admin->id,
+            'maksud_tujuan' => 'Business trip to London',
+            'tanggal_berangkat' => '2025-11-01',
+            'tanggal_pulang' => '2025-11-08',
+            'kota_asal_id' => $jakarta->id,
+            'kota_tujuan_id' => $london->id,
+            'durasi_hari' => 8,
+            'uang_saku_per_hari' => 50 * 15000,
+            'total_uang_saku' => 8 * (50 * 15000),
+            'status' => 'rejected',
+            'disetujui_oleh' => $admin->id,
+            'tanggal_disetujui' => now(),
+        ]);
+
+        PerjalananDinas::create([
+            'user_id' => $admin->id,
+            'maksud_tujuan' => 'Training in Sydney',
+            'tanggal_berangkat' => '2025-12-15',
+            'tanggal_pulang' => '2025-12-22',
+            'kota_asal_id' => $jakarta->id,
+            'kota_tujuan_id' => $sydney->id,
+            'durasi_hari' => 8,
+            'uang_saku_per_hari' => 50 * 15000,
+            'total_uang_saku' => 8 * (50 * 15000),
+            'status' => 'pending',
+            'disetujui_oleh' => null,
+            'tanggal_disetujui' => null,
+        ]);
+
+        PerjalananDinas::create([
+            'user_id' => $admin->id,
+            'maksud_tujuan' => 'Regional meeting in Makassar',
+            'tanggal_berangkat' => '2025-09-20',
+            'tanggal_pulang' => '2025-09-22',
+            'kota_asal_id' => $jakarta->id,
+            'kota_tujuan_id' => $makassar->id,
+            'durasi_hari' => 3,
+            'uang_saku_per_hari' => 300000,
+            'total_uang_saku' => 900000,
+            'status' => 'pending',
+            'disetujui_oleh' => null,
+            'tanggal_disetujui' => null,
         ]);
     }
 }

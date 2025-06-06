@@ -7,6 +7,7 @@ use App\Models\Kota;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Inertia\Inertia;
 
 class PerjalananDinasController extends Controller
 {
@@ -22,7 +23,7 @@ class PerjalananDinasController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
-        return inertia('Perdinku', [
+        return inertia('perdinku', [
             'perdins' => $perdins,
         ]);
     }
@@ -36,16 +37,16 @@ class PerjalananDinasController extends Controller
             'maksud_tujuan' => 'required|string',
             'tanggal_berangkat' => 'required|date',
             'tanggal_pulang' => 'required|date|after_or_equal:tanggal_berangkat',
-            'kota_asal_id' => ['required', 'exists:kotas,id'],
-            'kota_tujuan_id' => ['required', 'exists:kotas,id'],
+            'kota_asal_id' => 'required|exists:kotas,id',
+            'kota_tujuan_id' => 'required|exists:kotas,id|different:kota_asal_id',
         ]);
-
-        $startDate = Carbon::parse($data['tanggal_berangkat']);
-        $endDate = Carbon::parse($data['tanggal_pulang']);
-        $durasi_hari = $endDate->diffInDays($startDate) + 1;
 
         $kotaAsal = Kota::findOrFail($data['kota_asal_id']);
         $kotaTujuan = Kota::findOrFail($data['kota_tujuan_id']);
+
+        $startDate = Carbon::parse($data['tanggal_berangkat']);
+        $endDate = Carbon::parse($data['tanggal_pulang']);
+        $durasi_hari = $startDate->diffInDays($endDate) + 1;
 
         $distance = $this->calculateDistance(
             $kotaAsal->latitude,
@@ -57,7 +58,7 @@ class PerjalananDinasController extends Controller
         $uang_saku_per_hari = 0;
 
         if ($kotaTujuan->luar_negeri) {
-            $usdToIdr = 15000;
+            $usdToIdr = 17000;
             $uang_saku_per_hari = 50 * $usdToIdr;
         } else {
             if ($distance > 60) {
@@ -98,8 +99,6 @@ class PerjalananDinasController extends Controller
             'status' => 'required|in:approved,rejected',
         ]);
 
-        $this->authorize('sdm');
-
         $perdin->status = $request->status;
         $perdin->disetujui_oleh = Auth::id();
         $perdin->tanggal_disetujui = now();
@@ -131,4 +130,30 @@ class PerjalananDinasController extends Controller
 
         return $angle * $earthRadius;
     }
+
+    public function pengajuan()
+    {
+        $perdins = PerjalananDinas::with(['user', 'kotaAsal', 'kotaTujuan'])
+            ->latest()
+            ->get()
+            ->map(function ($perdin) {
+                return [
+                    'id' => $perdin->id,
+                    'pegawai_nama' => $perdin->user->name,
+                    'asal_kota_nama' => $perdin->kotaAsal->nama,
+                    'tujuan_kota_nama' => $perdin->kotaTujuan->nama,
+                    'tanggal_berangkat' => $perdin->tanggal_berangkat,
+                    'tanggal_pulang' => $perdin->tanggal_pulang,
+                    'durasi' => $perdin->durasi_hari,
+                    'maksud_tujuan' => $perdin->maksud_tujuan,
+                    'status' => $perdin->status,
+                    'total_uang_saku' => $perdin->total_uang_saku,
+                ];
+            });
+
+        return Inertia::render('sdm/pengajuan-perdin', [
+            'perdins' => $perdins,
+        ]);
+    }
+
 }

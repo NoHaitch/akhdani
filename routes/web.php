@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MasterKotaController;
-use App\Http\Controllers\PengajuanPerdiinController;
+use App\Http\Controllers\PerjalananDinasController;
 use Illuminate\Support\Facades\Auth;
 
 // Redirect root to login
@@ -21,9 +21,12 @@ Route::get('/home', function () {
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/perdinku', function () {
-        return Inertia::render('perdinku');
-    })->name('perdinku');
+    Route::get('/kotas', [MasterKotaController::class, 'apiIndex']);
+
+    Route::get('/perdinku', [PerjalananDinasController::class, 'index'])->name('perdinku');
+    Route::post('/perdinku', [PerjalananDinasController::class, 'store'])->name('perdinku.store');
+
+    Route::middleware('sdm')->patch('/perdinku/{perdin}/approve', [PerjalananDinasController::class, 'approve'])->name('perdinku.approve');
 
     Route::middleware(['admin'])->prefix('admin')->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('admin.users');
@@ -37,6 +40,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/master-kota/{kota}/edit', [MasterKotaController::class, 'edit'])->name('master.kota.edit');
         Route::put('/master-kota/{kota}', [MasterKotaController::class, 'update'])->name('master.kota.update');
         Route::delete('/master-kota/{kota}', [MasterKotaController::class, 'destroy'])->name('master.kota.destroy');
+
+        Route::get('/pengajuan-perdin', [PerjalananDinasController::class, 'pengajuan'])->name('sdm.pengajuan_perdin');
+
     });
 });
 

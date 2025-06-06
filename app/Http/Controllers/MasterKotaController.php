@@ -86,4 +86,9 @@ class MasterKotaController extends Controller
 
         return redirect()->route('master.kota')->with('success', 'Kota deleted successfully.');
     }
+
+    public function apiIndex()
+    {
+        return Kota::orderBy('nama')->get();
+    }
 }

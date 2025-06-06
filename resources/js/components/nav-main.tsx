@@ -22,7 +22,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
     const sdmItems: NavItem[] = [
         {
             title: 'Pengajuan Perdin',
-            href: '/sdm/perdin',
+            href: '/sdm/pengajuan-perdin',
             icon: FileText,
         },
         {
