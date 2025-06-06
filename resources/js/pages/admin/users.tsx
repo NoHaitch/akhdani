@@ -79,7 +79,7 @@ export default function Users({ users = [] }: UsersPageProps) {
             );
         } catch (error) {
             toast.error('Error', {
-                description: 'Failed to update user role',
+                description: 'Failed to update user role' + error,
             });
         }
     };

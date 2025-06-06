@@ -171,6 +171,7 @@ export default function MasterKota({ kotas = [] }: MasterKotaProps) {
             }
         } catch (error) {
             // nothing
+            console.error('Error submitting form:', error);
         }
     };
 
