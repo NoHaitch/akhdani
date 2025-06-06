@@ -37,7 +37,7 @@ export default function Register() {
 
     return (
         <AuthLayout title="Create an account" description="Enter your details below to create your account">
-            <Head title="Register" />
+            <Head title="Register | Akhdani" />
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
                     <div className="grid gap-2">
