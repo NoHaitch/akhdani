@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminMiddleware
+class SDMMiddleware
 {
     /**
      * Handle an incoming request.
@@ -15,12 +15,10 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user() && $request->user()->role === 'ADMIN') {
+        if ($request->user() && ($request->user()->role === 'ADMIN' || str_contains($request->user()->role, 'SDM'))) {
             return $next($request);
         }
 
         abort(403, 'You do not have admin access.');
-
-        return $next($request);
     }
 }

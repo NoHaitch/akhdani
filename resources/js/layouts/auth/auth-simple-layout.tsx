@@ -15,7 +15,7 @@ export default function AuthSimpleLayout({ children, title, description }: Props
                     <div className="flex flex-col items-center gap-4">
                         <Link href={route('home')} className="flex flex-col items-center gap-2 font-medium">
                             <div className="mb-8 flex flex-col items-center">
-                                <h1 className="text-4xl font-bold ">Akhdani Reka Solusi</h1>
+                                <h1 className="text-4xl font-bold">Akhdani Reka Solusi</h1>
                             </div>
                             <span className="sr-only">{title}</span>
                         </Link>

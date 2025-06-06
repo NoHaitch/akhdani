@@ -43,3 +43,13 @@ export interface User {
     updated_at: string
     [key: string]: unknown
 }
+
+export interface Kota {
+    id: number;
+    nama: string;
+    latitude: number;
+    longitude: number;
+    provinsi: string;
+    pulau: string;
+    luar_negeri: boolean;
+}
